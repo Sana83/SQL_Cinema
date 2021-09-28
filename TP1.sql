@@ -63,19 +63,87 @@ commit;
 rollback;
 
 /*Partie 4: Requêtes d'interrogation et de mise à jour*/
+--1
 select idfilm, titre
 from film
 where datesortie>='01/01/1990';
 
+--2
 select *
 from acteur
 where sexe = 'F';
 
-select film, cine, titre
+--3
+select cinema.idcine, cinema.nom
 from seance
-inner join film on seance.film = film.idfilm
+inner join cinema on seance.cine = cinema.idcine
 where film = '6';
 
+--4
+select casting.idfilm, film.titre
+from casting
+inner join film on film.idfilm= casting.idfilm
+where casting.idacteur = '10'; 
 
+--5
+SELECT casting.idfilm, film.titre
+FROM casting inner join film on film.idfilm=casting.idfilm
+inner join acteur on casting.idacteur=acteur.idacteur
+where upper(acteur.nom)='GAINSBOURG';
+
+--6
+SELECT COUNT(*)
+from acteur
+where sexe = 'F';
+
+--7
+SELECT COUNT(idcine) as nbcine
+FROM cinema;
+
+--8
+SELECT COUNT(*) as nbseances
+from seance
+where seance.film=5
+and seance.cine=1;
+
+--9
+select cinema.idcine, cinema.nom, count(*) as nbseance
+from seance
+inner join cinema on seance.cine = cinema.idcine
+Where seance.film = 5
+group by cinema.idcine, cinema.nom;
+
+--10
+select cinema.idcine, cinema.nom, count(*) as nbseance
+from cinema
+left join seance on seance.cine = cinema.idcine
+Where seance.film = 5
+group by cinema.idcine, cinema.nom;
+
+--10
+select casting.idfilm, casting.personnage, film.titre
+from casting
+inner join film on casting.idfilm = film.idfilm
+where casting.idacteur=10;
+
+--11
+select cinema.idcine, cinema.nom
+from cinema
+where cinema.idcine not in (select seance.cine from seance where seance.film = 6);
+
+--12
+select cinema.idcine, cinema.nom
+from cinema
+inner join seance on cinema.idcine = seance.cine
+where seance.film=6 and to_char(seance.heuredbt, 'HH24') > '15';
+
+--13
+select seance.idseance, seance.cine, cinema.nom, seance.film, film.titre, seance.prix, seance.heuredbt
+from seance
+inner join cinema on seance.cine = cinema.idcine
+inner join film on seance.film = film.idfilm
+where seance.prix= (select max(prix) from seance);
+
+--14
 
 /*Partie 5: Mise à jour de la base*/
