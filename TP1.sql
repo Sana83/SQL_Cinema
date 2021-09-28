@@ -145,5 +145,50 @@ inner join film on seance.film = film.idfilm
 where seance.prix= (select max(prix) from seance);
 
 --14
+select distinct cinema.idcine, cinema.nom
+from cinema
+inner join seance on cinema.idcine = seance.cine
+where seance.prix= (select max(prix) from seance);
 
+--15
+select acteur.idacteur, acteur.nom, acteur.prenom
+from acteur
+where acteur.idacteur not in (select casting.idacteur from casting);
+
+--16
+select acteur.idacteur, acteur.nom, count(casting.idfilm) as nbfilms
+from casting
+right join acteur on casting.idacteur=acteur.idacteur
+group by acteur.idacteur, acteur.nom;
+
+--17
+Select acteur.idacteur, acteur.nom, acteur.prenom
+from acteur 
+inner join casting on acteur.idacteur=casting.idacteur
+group by acteur.idacteur, acteur.nom, acteur.prenom
+having count(*) = (select max(count(*)) from casting group by casting.idacteur);
+
+--18
+select distinct cinema.idcine, cinema.nom
+from seance
+inner join cinema on cinema.idcine=seance.cine
+inner join casting on casting.idfilm=seance.film
+where casting.idacteur=10;
+
+--19
+select round(avg(prix),2) as moyenneprix
+from seance;
+
+--20
+select cinema.idcine, cinema.nom, AVG(prix) as prixMoyen
+from cinema
+inner join seance on cinema.idcine= seance.cine
+group by cinema.idcine, cinema.nom;
+
+--21 - déjà fait
+
+--22
+update seance
+set prix=prix*1.02
+where cine=(select idcine from cinema where nom='Variete');
 /*Partie 5: Mise à jour de la base*/
