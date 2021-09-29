@@ -57,9 +57,12 @@ add ( Adresse1 char(40), Adresse2 char(40) default null, CP char(5) default '130
 UPDATE CINEMA SET Adresse1 = '80, ave du Prado' WHERE IDCINE=1;
 UPDATE CINEMA SET Adresse1 = '2, rue des alouettes' WHERE IDCINE=2;
 UPDATE CINEMA SET Adresse1 = '7, place Castellane' WHERE IDCINE=3;
-UPDATE CINEMA SET Adresse1 = '277, ave du Prado' WHERE IDCINE=4;
+UPDATE CINEMA SET Adresse1 = '277, ave du Prado' WHERE IDCINE=4
 
+/*commit permet de "sauvergarder" ce qu'on a fait sans que le roolback puisse faire quelque chose*/
 commit;
+
+/*permet de faire un retour en arriere des commande en non commit*/
 rollback;
 
 /*Partie 4: Requêtes d'interrogation et de mise à jour*/
@@ -191,4 +194,36 @@ group by cinema.idcine, cinema.nom;
 update seance
 set prix=prix*1.02
 where cine=(select idcine from cinema where nom='Variete');
+
+--23
+Insert into film (idfilm, titre, datesortie)
+values ('43','Warcraft','24/05/2016');
+
 /*Partie 5: Mise à jour de la base*/
+-- 2 solutions: creér une nouvelle table avec les id des films ou directement créer une colonne dans la table film en y ajoutant un genre et metttre les genre à la main.
+-- ajout d'une colonne dans la table film avec les genres
+ALTER TABLE film
+add genre varchar(20);
+update film set genre = 'indefini';
+
+alter table film
+modify genre default 'indefini' not null;
+
+/*Partie 6: Modification de la structure de la base*/
+delete from film where idfilm=6;
+--avec cette requete = violation de contrainte d'intégrité
+--donc faire 
+delete from casting where idfilm=6;
+delete from film where idfilm=6;
+
+alter table casting drop constraint FKCASTFILM;
+alter table casting add constraint fk_casting_film foreign key(idfilm)
+references film(idfilm) on delete cascade;
+
+select * from casting where idfilm=6;
+select * from seance where idfilm=6;
+
+delete from film where idfilm=6;
+alter table seance drop constraint fkseancefilm;
+alter table seance add constraint fk_seance_film foreign key(film)
+references film(idfilm) on delete cascade;
